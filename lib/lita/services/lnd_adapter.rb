@@ -29,6 +29,14 @@ module Lita
         NotImplementedError
       end
 
+      def pay_invoice(user, pay_req)
+        self.class.post('/pay_invoice',
+                        :body => {  :user => user,
+                                    :pay_req => pay_req
+                        }.to_json,
+                        :headers => { 'Content-Type' => 'application/json' })
+      end
+
       def get_wallet_balance
         self.class.get("/wallet_balance")
       end
