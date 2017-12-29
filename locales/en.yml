@@ -1,0 +1,25 @@
+en:
+  lita:
+    handlers:
+      lightning:
+        yourwelcome: "De nada %{subject} :smile:"
+        create_invoice: "Para recibir tu pago debes enviar el siguiente request %{subject}"
+        get_wallet_balance: "El saldo de la wallet es:\n Total: %{total_balance}\n Confirmado: %{confirmed_balance}\n No confirmado: %{unconfirmed_balance}"
+        get_users: "Los usuarios son los siguientes %{subject}"
+        help:
+          get_users:
+            usage: muestrame los usuarios
+            description: Obtienes una lista con todos los usuarios
+          get_user_balance:
+            usage: cual es mi saldo?
+            description: Obtener el saldo disponible
+          get_wallet_balance:
+            usage: cual es el saldo total?
+            description: Obtener el saldo total
+          thanks:
+            usage: gracias
+            description: Agradecer al bot
+          create_invoice:
+            usage: generar invoice
+            description: generar invoice de pago estableciento la cantidad correspondiente
+
