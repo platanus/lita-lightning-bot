@@ -9,8 +9,12 @@ module Lita
         self.class.get("/users")
       end
 
-      def create_user
-        NotImplementedError
+      def create_user(user, email)
+        self.class.post('/users/create',
+                        :body => {  :slack_id => user,
+                                    :email => email,
+                        }.to_json,
+                        :headers => { 'Content-Type' => 'application/json' })
       end
 
       def get_user_balance(user)
@@ -30,7 +34,7 @@ module Lita
       end
 
       def pay_invoice(user, pay_req)
-        self.class.post('/pay_invoice',
+        self.class.post('/payments/pay_invoice',
                         :body => {  :user => user,
                                     :pay_req => pay_req
                         }.to_json,
@@ -38,11 +42,11 @@ module Lita
       end
 
       def get_wallet_balance
-        self.class.get('/wallet_balance')
+        self.class.get('/wallet/balance')
       end
 
       def create_invoice(user, amount)
-        self.class.post('/create_invoice',
+        self.class.post('/payments/create_invoice',
             :body => {  :user => user,
                         :amount => amount.to_s
                       }.to_json,
