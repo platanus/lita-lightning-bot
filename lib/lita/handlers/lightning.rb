@@ -60,16 +60,16 @@ module Lita
 
       route(/generar cobro por (\d+)/i, command: true, help: help_msg(:create_invoice)) do |response|
         user = response.user.id
-        pay_req = response.matches[0][0]
-        payment_request_response = pay_payment_request(user, pay_req)
-        response.reply(t(:create_invoice, pay_req: pay_req))
-      end
-
-      route(/paga la cuenta (\s+)/i, command: true, help: help_msg(:pay_invoice)) do |response|
-        user = response.user.id
         amount = response.matches[0][0]
         pay_req = create_invoice(user, amount)["pay_req"]
         response.reply(t(:create_invoice, pay_req: pay_req))
+      end
+
+      route(/paga la cuenta ([^\s]+)/i, command: true, help: help_msg(:pay_invoice)) do |response|
+        user = response.user.id
+        pay_req = response.matches[0][0]
+        payment_request_response = pay_payment_request(user, pay_req)
+        response.reply(t(:create_invoice, payment_request_response: payment_request_response))
       end
 
       route(/gracias/i, command: true, help: help_msg(:thanks)) do |response|

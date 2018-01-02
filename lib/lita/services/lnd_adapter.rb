@@ -38,7 +38,7 @@ module Lita
       end
 
       def get_wallet_balance
-        self.class.get("/wallet_balance")
+        self.class.get('/wallet_balance')
       end
 
       def create_invoice(user, amount)
