@@ -27,6 +27,10 @@ module Lita
         lnd_service.create_invoice(user, amount)
       end
 
+      def lookup_invoice(invoice)
+        lnd_service.lookup_invoice(invoice)
+      end
+
       def pay_payment_request(user, pay_req)
         lnd_service.pay_invoice(user, pay_req)
       end
@@ -90,6 +94,15 @@ module Lita
         else
           response.reply(t(:create_user, email: create_user_response["email"]))
         end
+      end
+
+      route(/(ver|mirar) (invoice|cuenta) ([^\s]+)/i, command: true, help: help_msg(:lookup_invoice)) do |response|
+        invoice = response.matches[0][2]
+        lookup_invoice_response = lookup_invoice(invoice)["pay_req"]
+        value = lookup_invoice_response["num_satoshis"]
+        destination = lookup_invoice_response["destination"]
+        description = lookup_invoice_response["description"]
+        response.reply(t(:lookup_invoice, value: value, destination: destination, description: description))
       end
 
       route(/gracias/i, command: true, help: help_msg(:thanks)) do |response|

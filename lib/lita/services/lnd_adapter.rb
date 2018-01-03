@@ -33,6 +33,10 @@ module Lita
         NotImplementedError
       end
 
+      def lookup_invoice(invoice)
+        self.class.get('/service/lookup_invoice/' + invoice)
+      end
+
       def pay_invoice(user, pay_req)
         self.class.post('/payments/pay_invoice',
                         :body => {  :user => user,
