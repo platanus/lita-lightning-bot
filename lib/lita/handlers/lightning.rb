@@ -31,6 +31,10 @@ module Lita
         lnd_service.lookup_invoice(invoice)
       end
 
+      def decrypt_invoice(invoice)
+        lnd_service.decrypt_invoice(invoice)
+      end
+
       def pay_payment_request(user, pay_req)
         lnd_service.pay_invoice(user, pay_req)
       end
@@ -95,17 +99,25 @@ module Lita
         end
       end
 
-      route(/(ver|mirar) (invoice|cuenta) ([^\s]+)/i, command: true, help: help_msg(:lookup_invoice)) do |response|
+      route(/(ver|mirar) (invoice|cuenta) ([^\s]+)/i, command: true, help: help_msg(:decrypt_invoice)) do |response|
         invoice = response.matches[0][2]
-        lookup_invoice_response = lookup_invoice(invoice)["pay_req"]
-        value = lookup_invoice_response["num_satoshis"]
-        destination = lookup_invoice_response["destination"]
-        description = lookup_invoice_response["description"]
-        response.reply(t(:lookup_invoice, value: value, destination: destination, description: description))
+        decrypt_invoice_response = decrypt_invoice(invoice)["pay_req"]
+        value = decrypt_invoice_response["num_satoshis"]
+        destination = decrypt_invoice_response["destination"]
+        description = decrypt_invoice_response["description"]
+        response.reply(t(:decrypt_invoice, value: value, destination: destination, description: description))
       end
 
-      route(/gracias/i, command: true, help: help_msg(:thanks)) do |response|
-        response.reply(t(:yourwelcome, subject: response.user.mention_name))
+      route(/cual es el estado (del|de la) (invoice|cuenta) ([^\s]+)/i, command: true, help: help_msg(:lookup_invoice)) do |response|
+        invoice = response.matches[0][2]
+        lookup_invoice_response = lookup_invoice(invoice)["pay_req"]
+        status = lookup_invoice_response["status"]
+        if status == 'true'
+          status = 'pagada'
+        elsif status == 'false'
+          status = 'no pagada'
+        end
+        response.reply(t(:lookup_invoice, status: status))
       end
 
       Lita.register_handler(self)

@@ -37,6 +37,10 @@ module Lita
         self.class.get('/service/lookup_invoice/' + invoice)
       end
 
+      def decrypt_invoice(invoice)
+        self.class.get('/service/decrypt_invoice/' + invoice)
+      end
+
       def pay_invoice(user, pay_req)
         self.class.post('/payments/pay_invoice',
                         :body => {  :user => user,
