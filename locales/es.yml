@@ -1,18 +1,21 @@
-es:
+en:
   lita:
     handlers:
       lightning:
-        yourwelcome: "De nada %{subject} :smile:"
-        get_user_balance: "El saldo que tienes disponible es: *%{user_balance}*"
-        create_invoice: "Para recibir tu pago debes enviar el siguiente request: %{pay_req}"
-        open_invoice: "El monto a pagar por el invoice es de: %{amount}"
-        pay_invoice: "El resultado del pago fue *exitoso*"
-        pay_invoice_error: "El pago no pudo ser efectuado debido a un error: %{error}"
-        get_wallet_balance: "El saldo de la wallet es:\n *Total*: %{total_balance}\n *Confirmado*: %{confirmed_balance}\n *No confirmado*: %{unconfirmed_balance}"
         get_users: "Los usuarios son los siguientes %{subject}"
+        get_user_balance: "El saldo que tienes disponible es: *%{user_balance}*"
+        get_wallet_balance: "El saldo de la wallet es:\n *Total*: %{total_balance}\n *Confirmado*: %{confirmed_balance}\n *No confirmado*: %{unconfirmed_balance}"
+
+        create_invoice: "Para recibir tu pago debes enviar el siguiente request: %{pay_req}"
+        pay_invoice: "El resultado del pago fue *exitoso*"
+
+        open_invoice: "El monto a pagar por el invoice es de: %{amount}"
+        pay_invoice_error: "El pago no pudo ser efectuado debido a un error: %{error}"
+
         create_user: "El usuario %{email} fue creado exitosamente"
         create_user_error: "El usuario no pudo ser creado por: %{error}"
-        lookup_invoice: "El invoice contiene los siguientes campos:\n *valor*: %{value}\n *descripción*: %{description}\n *destino*: %{destination}"
+        decrypt_invoice: "El invoice contiene los siguientes campos:\n *valor*: %{value}\n *descripción*: %{description}\n *destino*: %{destination}"
+        lookup_invoice: "La cuenta se encuentra: *%{status}*"
         help:
           get_users:
             usage: muestrame los usuarios
@@ -23,12 +26,18 @@ es:
           get_wallet_balance:
             usage: cual es el saldo total?
             description: Obtener el saldo total
-          thanks:
-            usage: gracias
-            description: Agradecer al bot
           create_invoice:
             usage: generar cobro por <cantidad en satoshis>
             description: generar invoice de pago estableciento la cantidad correspondiente
           pay_invoice:
             usage: paga la cuenta <pay_req>
             description: pagar la cuenta por el monto acordado
+          decrypt_invoice:
+            usage: mira invoice <pay_req>
+            description: Entrega los campos asociados al payment request
+          lookup_invoice:
+            usage: cual es el estado del invoice <pay_req>
+            description: Muestra si el invoice ha sido pagado o no
+          create_user:
+            usage: crear usuario <correo electronico>
+            description: Permite crear un usuario para poder operar con la red LN
