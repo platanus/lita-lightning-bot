@@ -18,7 +18,7 @@ module Lita
       end
 
       def get_user_balance(user)
-        NotImplementedError
+        self.class.get('/users/' + user + '/balance/')
       end
 
       def get_open_channels

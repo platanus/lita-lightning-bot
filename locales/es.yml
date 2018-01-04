@@ -3,6 +3,7 @@ es:
     handlers:
       lightning:
         yourwelcome: "De nada %{subject} :smile:"
+        get_user_balance: "El saldo que tienes disponible es: *%{user_balance}*"
         create_invoice: "Para recibir tu pago debes enviar el siguiente request: %{pay_req}"
         open_invoice: "El monto a pagar por el invoice es de: %{amount}"
         pay_invoice: "El resultado del pago fue *exitoso*"
