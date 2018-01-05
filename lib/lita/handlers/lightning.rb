@@ -93,6 +93,13 @@ module Lita
         response.reply(t(:lookup_invoice, status: status))
       end
 
+      http.post "/notify_payment" do |request|
+        data = MultiJson.load(request.body, symbolize_keys: true)
+        user = User.find_by_id(data[:user])
+        satoshis = data[:satoshis]
+        robot.send_message(Source.new(user: user), t(:notify_payment, amount: satoshis))
+      end
+
       Lita.register_handler(self)
     end
   end
