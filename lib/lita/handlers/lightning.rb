@@ -41,11 +41,11 @@ module Lita
       route(/(generar|crear) (cobro|invoice) por (\d+)/i, command: true, help: help_msg(:create_invoice)) do |response|
         user = response.user.id
         amount = response.matches[0][2]
-        pay_req = lnd_service.create_invoice(user, amount)["pay_req"]
-        if success_payment?(pay_req)
-          response.reply(t(:create_invoice, pay_req: pay_req))
+        create_invoice_response = lnd_service.create_invoice(user, amount)
+        if success_payment?(create_invoice_response)
+          response.reply(t(:create_invoice, pay_req: create_invoice_response["pay_req"]))
         else
-          response.reply(t(:error, error: pay_req["payment_error"]))
+          response.reply(t(:error, error: create_invoice_response["pay_req"]))
         end
 
       end
