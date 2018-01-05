@@ -17,6 +17,10 @@ module Lita
                         :headers => { 'Content-Type' => 'application/json' })
       end
 
+      def get_wallet_balance
+        self.class.get('/wallet/balance')
+      end
+
       def get_user_balance(user)
         self.class.get('/users/' + user + '/balance/')
       end
@@ -33,12 +37,20 @@ module Lita
         NotImplementedError
       end
 
-      def lookup_invoice(invoice)
-        self.class.get('/service/lookup_invoice/' + invoice)
+      def create_invoice(user, amount)
+        self.class.post('/payments/create_invoice',
+                        :body => {  :user => user,
+                                    :amount => amount.to_s
+                        }.to_json,
+                        :headers => { 'Content-Type' => 'application/json' })
       end
 
       def decrypt_invoice(invoice)
         self.class.get('/service/decrypt_invoice/' + invoice)
+      end
+
+      def lookup_invoice(invoice)
+        self.class.get('/service/lookup_invoice/' + invoice)
       end
 
       def pay_invoice(user, pay_req)
@@ -47,18 +59,6 @@ module Lita
                                     :pay_req => pay_req
                         }.to_json,
                         :headers => { 'Content-Type' => 'application/json' })
-      end
-
-      def get_wallet_balance
-        self.class.get('/wallet/balance')
-      end
-
-      def create_invoice(user, amount)
-        self.class.post('/payments/create_invoice',
-            :body => {  :user => user,
-                        :amount => amount.to_s
-                      }.to_json,
-                      :headers => { 'Content-Type' => 'application/json' })
       end
 
     end

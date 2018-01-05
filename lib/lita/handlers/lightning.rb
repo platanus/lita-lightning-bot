@@ -11,59 +11,27 @@ module Lita
         Services::LndAdapter.new
       end
 
-      def get_user_balance(user)
-        lnd_service.get_user_balance(user)
-      end
-
-      def get_wallet_balance
-        lnd_service.get_wallet_balance
-      end
-
-      def get_users
-        lnd_service.get_users
-      end
-
-      def create_invoice(user, amount)
-        lnd_service.create_invoice(user, amount)
-      end
-
-      def lookup_invoice(invoice)
-        lnd_service.lookup_invoice(invoice)
-      end
-
-      def decrypt_invoice(invoice)
-        lnd_service.decrypt_invoice(invoice)
-      end
-
-      def pay_payment_request(user, pay_req)
-        lnd_service.pay_invoice(user, pay_req)
-      end
-
-      def has_errors_in_payment?(payment_request_response)
-        payment_request_response["payment_error"] != ""
+      def success_payment?(payment_request_response)
+        payment_request_response["status"] == "true"
       end
 
       def has_errors_in_create_user?(create_user_response)
         create_user_response["error"] != ""
       end
 
-      def create_user(user, email)
-        lnd_service.create_user(user, email)
-      end
-
       # Routes.
       route(/muestrame los usuarios/i, command: true) do |response|
-        users = get_users
+        users = lnd_service.get_users
         response.reply(t(:get_users, subject: users))
       end
 
       route(/cual es mi (saldo|balance)?/i, command: true, help: help_msg(:get_user_balance)) do |response|
-        user_balance = get_user_balance(response.user.id)["user"]
+        user_balance = lnd_service.get_user_balance(response.user.id)["user"]
         response.reply(t(:get_user_balance, user_balance: user_balance["balance"]))
       end
 
       route(/cual es el saldo total?/i, command: true, help: help_msg(:get_wallet_balance)) do |response|
-        wallet_balance = get_wallet_balance["wallet_balance"]
+        wallet_balance = lnd_service.get_wallet_balance["wallet_balance"]
         confirmed_balance = wallet_balance["confirmed_balance"]
         unconfirmed_balance = wallet_balance["unconfirmed_balance"]
         total_balance = wallet_balance["total_balance"]
@@ -73,25 +41,30 @@ module Lita
       route(/(generar|crear) (cobro|invoice) por (\d+)/i, command: true, help: help_msg(:create_invoice)) do |response|
         user = response.user.id
         amount = response.matches[0][2]
-        pay_req = create_invoice(user, amount)["pay_req"]
-        response.reply(t(:create_invoice, pay_req: pay_req))
+        pay_req = lnd_service.create_invoice(user, amount)["pay_req"]
+        if success_payment?(pay_req)
+          response.reply(t(:create_invoice, pay_req: pay_req))
+        else
+          response.reply(t(:error, error: pay_req["payment_error"]))
+        end
+
       end
 
       route(/paga la cuenta ([^\s]+)/i, command: true, help: help_msg(:pay_invoice)) do |response|
         user = response.user.id
         pay_req = response.matches[0][0]
-        payment_request_response = pay_payment_request(user, pay_req)["pay_req"]
-        if has_errors_in_payment?(payment_request_response)
-          response.reply(t(:pay_invoice_error, error: payment_request_response["payment_error"]))
-        else
+        payment_request_response = lnd_service.pay_invoice(user, pay_req)["pay_req"]
+        if success_payment?(payment_request_response)
           response.reply(t(:pay_invoice))
+        else
+          response.reply(t(:pay_invoice_error, error: payment_request_response["payment_error"]))
         end
       end
 
       route(/(generar|crear) usuario ([^\s]+)/i, command: true, help: help_msg(:create_user)) do |response|
         user = response.user.id
         email = response.matches[0][1]
-        create_user_response = create_user(user, email)["user"]
+        create_user_response = lnd_service.create_user(user, email)["user"]
         if has_errors_in_create_user?(create_user_response)
           response.reply(t(:create_user_error, error: create_user_response["error"]))
         else
@@ -101,7 +74,7 @@ module Lita
 
       route(/(ver|mirar) (invoice|cuenta) ([^\s]+)/i, command: true, help: help_msg(:decrypt_invoice)) do |response|
         invoice = response.matches[0][2]
-        decrypt_invoice_response = decrypt_invoice(invoice)["pay_req"]
+        decrypt_invoice_response = lnd_service.decrypt_invoice(invoice)["pay_req"]
         value = decrypt_invoice_response["num_satoshis"]
         destination = decrypt_invoice_response["destination"]
         description = decrypt_invoice_response["description"]
@@ -110,7 +83,7 @@ module Lita
 
       route(/cual es el estado (del|de la) (invoice|cuenta) ([^\s]+)/i, command: true, help: help_msg(:lookup_invoice)) do |response|
         invoice = response.matches[0][2]
-        lookup_invoice_response = lookup_invoice(invoice)["pay_req"]
+        lookup_invoice_response = lnd_service.lookup_invoice(invoice)["pay_req"]
         status = lookup_invoice_response["status"]
         if status == 'true'
           status = 'pagada'

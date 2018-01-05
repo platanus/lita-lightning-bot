@@ -1,4 +1,4 @@
-en:
+es:
   lita:
     handlers:
       lightning:
@@ -16,6 +16,8 @@ en:
         create_user_error: "El usuario no pudo ser creado por: %{error}"
         decrypt_invoice: "El invoice contiene los siguientes campos:\n *valor*: %{value}\n *descripción*: %{description}\n *destino*: %{destination}"
         lookup_invoice: "La cuenta se encuentra: *%{status}*"
+
+        error: "No se pudo completar el comando por el siguiente error: %{error}"
         help:
           get_users:
             usage: muestrame los usuarios
