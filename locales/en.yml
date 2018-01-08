@@ -46,5 +46,5 @@ en:
             usage: crear usuario <correo electronico>
             description: Permite crear un usuario para poder operar con la red LN
           force_refresh:
-            usage: fuerza una actualización en el estado de todas tus cuentas
+            usage: actualizar saldos
             description: Si un pago no aparece, puedes usar esta opción para actualizar todos los saldos
