@@ -5,8 +5,12 @@ module Lita
       include HTTParty
       base_uri 'http://localhost:3000/api/v1'
 
-      def get_users
-        self.class.get("/users")
+      def create_invoice(user, amount)
+        self.class.post('/payments/create_invoice',
+                        :body => {  :user => user,
+                                    :amount => amount.to_s
+                        }.to_json,
+                        :headers => { 'Content-Type' => 'application/json' })
       end
 
       def create_user(user, email)
@@ -16,6 +20,19 @@ module Lita
                         }.to_json,
                         :headers => { 'Content-Type' => 'application/json' })
       end
+
+      def decrypt_invoice(invoice)
+        self.class.get('/service/decrypt_invoice/' + invoice)
+      end
+
+      def force_refresh(user)
+        self.class.get('/service/force_refresh/' + user)
+      end
+
+      def get_users
+        self.class.get("/users")
+      end
+
 
       def get_wallet_balance
         self.class.get('/wallet/balance')
@@ -37,18 +54,6 @@ module Lita
         NotImplementedError
       end
 
-      def create_invoice(user, amount)
-        self.class.post('/payments/create_invoice',
-                        :body => {  :user => user,
-                                    :amount => amount.to_s
-                        }.to_json,
-                        :headers => { 'Content-Type' => 'application/json' })
-      end
-
-      def decrypt_invoice(invoice)
-        self.class.get('/service/decrypt_invoice/' + invoice)
-      end
-
       def lookup_invoice(invoice)
         self.class.get('/service/lookup_invoice/' + invoice)
       end
@@ -60,7 +65,6 @@ module Lita
                         }.to_json,
                         :headers => { 'Content-Type' => 'application/json' })
       end
-
     end
   end
 end

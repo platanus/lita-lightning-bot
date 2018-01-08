@@ -43,21 +43,23 @@ module Lita
         amount = response.matches[0][2]
         create_invoice_response = lnd_service.create_invoice(user, amount)
         if success_payment?(create_invoice_response)
-          response.reply(t(:create_invoice, pay_req: create_invoice_response["pay_req"]))
+          qr_code = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + create_invoice_response["pay_req"]
+          response.reply(t(:create_invoice, pay_req: create_invoice_response["pay_req"], qr_code: qr_code))
         else
           response.reply(t(:error, error: create_invoice_response["pay_req"]))
         end
-
       end
 
       route(/paga la cuenta ([^\s]+)/i, command: true, help: help_msg(:pay_invoice)) do |response|
         user = response.user.id
         pay_req = response.matches[0][0]
-        payment_request_response = lnd_service.pay_invoice(user, pay_req)["pay_req"]
-        if success_payment?(payment_request_response)
-          response.reply(t(:pay_invoice))
+        payment_response = lnd_service.pay_invoice(user, pay_req)
+        payment_request = payment_response["pay_req"]
+        balance = payment_response["balance"]
+        if success_payment?(payment_request)
+          response.reply(t(:pay_invoice, balance: balance))
         else
-          response.reply(t(:pay_invoice_error, error: payment_request_response["payment_error"]))
+          response.reply(t(:pay_invoice_error, error: payment_request["payment_error"]))
         end
       end
 
@@ -91,6 +93,12 @@ module Lita
           status = 'no pagada'
         end
         response.reply(t(:lookup_invoice, status: status))
+      end
+
+      route(/(forzar|actualizar) (invoices|cuentas|saldos)/i, command: true, help: help_msg(:force_refresh)) do |response|
+        user = response.user.id
+        lnd_service.force_refresh(user)
+        response.reply(t(:force_refresh))
       end
 
       http.post "/notify_payment" do |request|
