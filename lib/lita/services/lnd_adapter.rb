@@ -6,7 +6,7 @@ module Lita
       include HTTParty
 
       def initialize
-        self.class.base_uri ENV['API_BASE_URI']
+        self.class.base_uri ENV['LND_API_BASE_URI']
       end
 
       def create_invoice(user, amount)
