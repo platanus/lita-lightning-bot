@@ -5,21 +5,17 @@ es:
         get_users: "Los usuarios son los siguientes %{subject}"
         get_user_balance: "El saldo que tienes disponible es: *%{user_balance}*"
         get_wallet_balance: "El saldo de la wallet es:\n *Total*: %{total_balance}\n *Confirmado*: %{confirmed_balance}\n *No confirmado*: %{unconfirmed_balance}"
-
         create_invoice: "Para recibir tu pago debes enviar el siguiente request: *%{pay_req}*\nO escanea el siguiente código qr:\n%{qr_code}"
         pay_invoice: "El resultado del pago fue: *exitoso*\nTu saldo actual es de: *%{balance}*"
         open_invoice: "El monto a pagar por el invoice es de: %{amount}"
         pay_invoice_error: "El pago no pudo ser efectuado debido a un error: %{error}"
-
         create_user: "El usuario %{email} fue creado exitosamente"
         create_user_error: "El usuario no pudo ser creado por: %{error}"
         decrypt_invoice: "El invoice contiene los siguientes campos:\n *valor*: %{value}\n *descripción*: %{description}\n *destino*: %{destination}"
         lookup_invoice: "La cuenta se encuentra: *%{status}*"
         notify_payment: "Recibiste un pago por: *%{amount}* satoshis"
         force_refresh: "Todos tus pagos han sido actualizados"
-
         error: "No se pudo completar el comando por el siguiente error: %{error}"
-
         help:
           get_users:
             usage: muestrame los usuarios
@@ -48,3 +44,5 @@ es:
           force_refresh:
             usage: actualizar saldos
             description: Si un pago no aparece, puedes usar esta opción para actualizar todos los saldos
+        paid: "pagado"
+        not_paid: "no pagado"

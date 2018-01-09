@@ -88,9 +88,9 @@ module Lita
         lookup_invoice_response = lnd_service.lookup_invoice(invoice)["pay_req"]
         status = lookup_invoice_response["status"]
         if status == 'true'
-          status = 'pagada'
+          status = t(:paid)
         elsif status == 'false'
-          status = 'no pagada'
+          status = t(:not_paid)
         end
         response.reply(t(:lookup_invoice, status: status))
       end

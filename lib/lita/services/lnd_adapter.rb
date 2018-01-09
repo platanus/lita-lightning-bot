@@ -1,12 +1,12 @@
-require "json"
+#require "json"
+require 'pry'
 module Lita
   module Services
     class LndAdapter
       include HTTParty
-      base_uri 'http://localhost:3000/api/v1'
 
-      def headers
-        {"Authorization" => "Token token=\"#{ENV['LND_API_TOKEN']}\"", 'Content-Type' => 'application/json' }
+      def initialize
+        self.class.base_uri ENV['API_BASE_URI']
       end
 
       def create_invoice(user, amount)
@@ -68,6 +68,12 @@ module Lita
                         }.to_json,
                         :headers =>  headers)
       end
+
+      private
+      def headers
+        {"Authorization" => "Token token=\"#{ENV['LND_API_TOKEN']}\"", 'Content-Type' => 'application/json' }
+      end
+
     end
   end
 end
