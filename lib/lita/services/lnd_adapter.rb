@@ -1,5 +1,3 @@
-#require "json"
-require 'pry'
 module Lita
   module Services
     class LndAdapter
@@ -10,19 +8,23 @@ module Lita
       end
 
       def create_invoice(user, amount)
-        self.class.post('/payments/create_invoice',
-                        :body => {  :user => user,
-                                    :amount => amount.to_s
-                        }.to_json,
-                        :headers => headers)
+        self.class.post(
+          '/payments/create_invoice',
+          body: {
+            user: user,
+            amount: amount.to_s
+          }.to_json, headers: headers
+        )
       end
 
       def create_user(user, email)
-        self.class.post('/users/create',
-                        :body => {  :slack_id => user,
-                                    :email => email,
-                        }.to_json,
-                        :headers => headers)
+        self.class.post(
+          '/users/create',
+          body: {
+            slack_id: user,
+            email: email
+          }.to_json, headers: headers
+        )
       end
 
       def decrypt_invoice(invoice)
@@ -62,18 +64,21 @@ module Lita
       end
 
       def pay_invoice(user, pay_req)
-        self.class.post('/payments/pay_invoice',
-                        :body => {  :user => user,
-                                    :pay_req => pay_req
-                        }.to_json,
-                        :headers =>  headers)
+        self.class.post(
+          '/payments/pay_invoice',
+          body: {
+            user: user,
+            pay_req: pay_req
+          }.to_json, headers: headers
+        )
       end
 
       private
-      def headers
-        {"Authorization" => "Token token=\"#{ENV['LND_API_TOKEN']}\"", 'Content-Type' => 'application/json' }
-      end
 
+      def headers
+        { "Authorization" => "Token token=\"#{ENV['LND_API_TOKEN']}\"",
+          'Content-Type' => 'application/json' }
+      end
     end
   end
 end
