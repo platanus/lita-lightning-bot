@@ -9,8 +9,6 @@ en:
         pay_invoice: "El resultado del pago fue: *exitoso*\nTu saldo actual es de: *%{balance}*"
         open_invoice: "El monto a pagar por el invoice es de: %{amount}"
         pay_invoice_error: "El pago no pudo ser efectuado debido a un error: %{error}"
-        create_user: "El usuario %{email} fue creado exitosamente"
-        create_user_error: "El usuario no pudo ser creado por: %{error}"
         decrypt_invoice: "El invoice contiene los siguientes campos:\n *valor*: %{value}\n *descripción*: %{description}\n *destino*: %{destination}"
         lookup_invoice: "La cuenta se encuentra: *%{status}*"
         notify_payment: "Recibiste un pago por: *%{amount}* satoshis"
@@ -25,24 +23,21 @@ en:
             description: Obtener el saldo disponible
           get_wallet_balance:
             usage: cual es el saldo total?
-            description: Obtener el saldo total
+            description: Obtener el saldo total (admin)
           create_invoice:
-            usage: generar cobro por <cantidad en satoshis>
-            description: generar invoice de pago estableciento la cantidad correspondiente
+            usage: genera un cobro por <cantidad en satoshis>
+            description: generar un invoice de pago estableciento la cantidad correspondiente
           pay_invoice:
             usage: paga la cuenta <pay_req>
-            description: pagar la cuenta por el monto acordado
+            description: paga la cuenta por el monto acordado
           decrypt_invoice:
             usage: mira invoice <pay_req>
             description: Entrega los campos asociados al payment request
           lookup_invoice:
             usage: cual es el estado del invoice <pay_req>
             description: Muestra si el invoice ha sido pagado o no
-          create_user:
-            usage: crear usuario <correo electronico>
-            description: Permite crear un usuario para poder operar con la red LN
           force_refresh:
-            usage: actualizar saldos
+            usage: actualiza saldos
             description: Si un pago no aparece, puedes usar esta opción para actualizar todos los saldos
         paid: "pagado"
         not_paid: "no pagado"
