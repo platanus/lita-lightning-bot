@@ -11,11 +11,11 @@ module Lita
       end
 
       def success_payment?(payment_request_response)
-        payment_request_response["status"] == "true"
+        payment_request_response["error"].empty?
       end
 
-      def has_errors_in_create_user?(create_user_response)
-        create_user_response["error"] != ""
+      def success?(response)
+        !response.key?(:errors)
       end
 
       # Routes.
@@ -42,18 +42,18 @@ module Lita
           total_balance: total_balance))
       end
 
-      route(/(genera|crea) (un) (cobro|invoice) por (\d+)/i,
+      route(/(genera|crea) (un )?(cobro|invoice) por (\d+)/i,
         command: true, help: help_msg(:create_invoice)) do |response|
         user = response.user.id
         amount = response.matches[0][3]
         create_invoice_response = lnd_service.create_invoice(user, amount)
-        if success_payment?(create_invoice_response)
+        if success?(create_invoice_response)
           qr_code = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
             create_invoice_response["pay_req"]
           response.reply(t(:create_invoice,
             pay_req: create_invoice_response["pay_req"], qr_code: qr_code))
         else
-          response.reply(t(:error, error: create_invoice_response["pay_req"]))
+          response.reply(t(:error, error: create_invoice_response["error"]["message"]))
         end
       end
 
@@ -61,24 +61,11 @@ module Lita
         user = response.user.id
         pay_req = response.matches[0][0]
         payment_response = lnd_service.pay_invoice(user, pay_req)
-        payment_request = payment_response["pay_req"]
         balance = payment_response["balance"]
-        if success_payment?(payment_request)
+        if success_payment?(payment_response)
           response.reply(t(:pay_invoice, balance: balance))
         else
-          response.reply(t(:pay_invoice_error, error: payment_request["payment_error"]))
-        end
-      end
-
-      route(/(genera|crea) usuario ([^\s]+)/i,
-        command: true, help: help_msg(:create_user)) do |response|
-        user = response.user.id
-        email = response.matches[0][1]
-        create_user_response = lnd_service.create_user(user, email)["user"]
-        if has_errors_in_create_user?(create_user_response)
-          response.reply(t(:create_user_error, error: create_user_response["error"]))
-        else
-          response.reply(t(:create_user, email: create_user_response["email"]))
+          response.reply(t(:pay_invoice_error, error: payment_response["error"]))
         end
       end
 
@@ -106,7 +93,7 @@ module Lita
         response.reply(t(:lookup_invoice, status: status))
       end
 
-      route(/(forzar|actualizar) (invoices|cuentas|saldos)/i,
+      route(/(actualiza) (invoices|cuentas|saldos)/i,
         command: true, help: help_msg(:force_refresh)) do |response|
         user = response.user.id
         lnd_service.force_refresh(user)
