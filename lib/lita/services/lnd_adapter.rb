@@ -35,10 +35,6 @@ module Lita
         self.class.get('/payments/force_refresh/' + user, headers: headers)
       end
 
-      def get_users
-        self.class.get('/users', headers: headers)
-      end
-
       def get_wallet_balance
         self.class.get('/wallet/balance', headers: headers)
       end

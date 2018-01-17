@@ -19,18 +19,13 @@ module Lita
       end
 
       # Routes.
-      route(/muestrame los usuarios/i, command: true) do |response|
-        users = lnd_service.get_users
-        response.reply(t(:get_users, subject: users))
-      end
-
-      route(/cual es mi (saldo|balance)?/i,
+      route(/cual es mi (saldo|balance)/i,
         command: true, help: help_msg(:get_user_balance)) do |response|
         user_balance = lnd_service.get_user_balance(response.user.id)["user"]
         response.reply(t(:get_user_balance, user_balance: user_balance["balance"]))
       end
 
-      route(/cual es el saldo total?/i,
+      route(/cual es el saldo total/i,
         command: true, help: help_msg(:get_wallet_balance)) do |response|
         wallet_balance = lnd_service.get_wallet_balance["wallet_balance"]
         confirmed_balance = wallet_balance["confirmed_balance"]
