@@ -2,6 +2,8 @@ require 'json'
 module Lita
   module Handlers
     class Lightning < Handler
+      BITCOIN_IN_SATOSHIS = 100000000
+
       def self.help_msg(route)
         { "lightning-payments: #{t("help.#{route}.usage")}" => t("help.#{route}.description") }
       end
@@ -16,6 +18,15 @@ module Lita
 
       def success?(response)
         !response.key?(:errors)
+      end
+
+      def get_amount_of_satoshis(currency, amount)
+        if currency == "CLP"
+          surbtc_service = Services::SurbtcAdapter.new
+          last_price = surbtc_service.get_current_price
+          amount = Integer(Integer(amount)/Float(last_price) * BITCOIN_IN_SATOSHIS)
+        end
+        amount
       end
 
       # Routes.
@@ -37,10 +48,14 @@ module Lita
           total_balance: total_balance))
       end
 
-      route(/(genera|crea) (un )?(cobro|invoice) por (\d+)/i,
+      route(/(genera|crea) (un )?(cobro|invoice) por (\d+)(\s)?([^\s]+)?/i,
         command: true, help: help_msg(:create_invoice)) do |response|
         user = response.user.id
         amount = response.matches[0][3]
+        unless response.matches[0][5].nil?
+          currency = response.matches[0][5]
+          amount = get_amount_of_satoshis(currency, amount)
+        end
         create_invoice_response = lnd_service.create_invoice(user, amount)
         if success?(create_invoice_response)
           qr_code = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +

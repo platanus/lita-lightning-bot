@@ -4,7 +4,7 @@ es:
       lightning:
         get_user_balance: "El saldo que tienes disponible es: *%{user_balance}*"
         get_wallet_balance: "El saldo de la wallet es:\n *Total*: %{total_balance}\n *Confirmado*: %{confirmed_balance}\n *No confirmado*: %{unconfirmed_balance}"
-        create_invoice: "Para recibir tu pago debes enviar el siguiente request: *%{pay_req}*\nO escanea el siguiente código qr:\n%{qr_code}"
+        create_invoice: "Para recibir tu pago debes enviar el siguiente request: *%{pay_req}*\nO escanea el siguiente código QR:\n%{qr_code}"
         pay_invoice: "El resultado del pago fue: *exitoso*\nTu saldo actual es de: *%{balance}*"
         open_invoice: "El monto a pagar por el invoice es de: %{amount}"
         pay_invoice_error: "El pago no pudo ser efectuado debido a un error: %{error}"
