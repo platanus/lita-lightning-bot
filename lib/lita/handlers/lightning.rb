@@ -72,8 +72,9 @@ module Lita
         pay_req = response.matches[0][0]
         payment_response = lnd_service.pay_invoice(user, pay_req)
         balance = payment_response["balance"]
+        fee = payment_response["fee"]
         if success_payment?(payment_response)
-          response.reply(t(:pay_invoice, balance: balance))
+          response.reply(t(:pay_invoice, balance: balance, fee: fee))
         else
           response.reply(t(:pay_invoice_error, error: payment_response["error"]))
         end
