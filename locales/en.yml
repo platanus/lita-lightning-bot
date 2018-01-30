@@ -8,7 +8,7 @@ en:
         pay_invoice: "El resultado del pago fue: *exitoso*\nLa transacción tuvo un costo de: *%{fee} satoshis*\nTu saldo actual es de: *%{balance}*"
         open_invoice: "El monto a pagar por el invoice es de: %{amount}"
         pay_invoice_error: "El pago no pudo ser efectuado debido a un error: %{error}"
-        decrypt_invoice: "El invoice contiene los siguientes campos:\n *valor*: %{value}\n *descripción*: %{description}\n *destino*: %{destination}"
+        decrypt_invoice: "El invoice contiene los siguientes campos:\n *valor*: %{value} satoshis (%{amount_in_clp} CLP)\n *descripción*: %{description}\n *destino*: %{destination}"
         lookup_invoice: "La cuenta se encuentra: *%{status}*"
         notify_payment: "Recibiste un pago por: *%{amount}* satoshis"
         force_refresh: "Todos tus pagos han sido actualizados"

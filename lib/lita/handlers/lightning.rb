@@ -23,7 +23,7 @@ module Lita
       def satoshis_to_clp(amount)
         surbtc_service = Services::SurbtcAdapter.new
         last_price = surbtc_service.get_current_price
-        (Float(amount)/BITCOIN_IN_SATOSHIS)*Float(last_price)
+        ((Float(amount)/BITCOIN_IN_SATOSHIS)*Float(last_price)).round
       end
 
       def clp_to_satoshis(amount)
@@ -80,16 +80,16 @@ module Lita
         end
       end
 
-      route(/co?ó?brale (\d+)(\s)?([^\s]+)? a ([^\s]+)/i,
+      route(/c(o|ó)brale (\d+)(\s)?([^\s]+)? a ([^\s]+)/i,
             command: true, help: help_msg(:request_payment_to_user)) do |response|
         user = response.user.id
-        amount = response.matches[0][0]
-        destination_user = User.find_by_mention_name(clean_mention_name(response.matches[0][3]))
-        create_invoice_response = lnd_service.create_invoice(user, amount)
-        unless response.matches[0][2].nil?
-          currency = response.matches[0][2]
+        amount = response.matches[0][1]
+        destination_user = User.find_by_mention_name(clean_mention_name(response.matches[0][4]))
+        unless response.matches[0][3].nil?
+          currency = response.matches[0][3]
           amount = get_amount_of_satoshis(currency, amount)
         end
+        create_invoice_response = lnd_service.create_invoice(user, amount)
         if success?(create_invoice_response)
           pay_req = create_invoice_response["pay_req"]
           qr_code = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
@@ -122,10 +122,11 @@ module Lita
         invoice = response.matches[0][2]
         decrypt_invoice_response = lnd_service.decrypt_invoice(invoice)["pay_req"]
         value = decrypt_invoice_response["num_satoshis"]
+        amount_in_clp = satoshis_to_clp(value)
         destination = decrypt_invoice_response["destination"]
         description = decrypt_invoice_response["description"]
         response.reply(t(:decrypt_invoice,
-          value: value, destination: destination, description: description))
+          value: value, destination: destination, description: description, amount_in_clp: amount_in_clp ))
       end
 
       route(/cual es el estado (del|de la) (invoice|cuenta) ([^\s]+)/i,
