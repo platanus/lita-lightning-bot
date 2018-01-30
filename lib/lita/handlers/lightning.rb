@@ -20,13 +20,26 @@ module Lita
         !response.key?(:errors)
       end
 
+      def satoshis_to_clp(amount)
+        surbtc_service = Services::SurbtcAdapter.new
+        last_price = surbtc_service.get_current_price
+        (Float(amount)/BITCOIN_IN_SATOSHIS)*Float(last_price)
+      end
+
+      def clp_to_satoshis(amount)
+        surbtc_service = Services::SurbtcAdapter.new
+        last_price = surbtc_service.get_current_price
+        Integer(Integer(amount)/Float(last_price) * BITCOIN_IN_SATOSHIS)
+      end
+
       def get_amount_of_satoshis(currency, amount)
-        if currency == "CLP"
-          surbtc_service = Services::SurbtcAdapter.new
-          last_price = surbtc_service.get_current_price
-          amount = Integer(Integer(amount)/Float(last_price) * BITCOIN_IN_SATOSHIS)
+        if ['CLP', 'clp'].include? currency
+          clp_to_satoshis(amount)
         end
-        amount
+      end
+
+      def clean_mention_name(mention_name)
+        mention_name.delete('@') if mention_name
       end
 
       # Routes.
@@ -62,6 +75,30 @@ module Lita
             create_invoice_response["pay_req"]
           response.reply(t(:create_invoice,
             pay_req: create_invoice_response["pay_req"], qr_code: qr_code))
+        else
+          response.reply(t(:error, error: create_invoice_response["error"]["message"]))
+        end
+      end
+
+      route(/co?ó?brale (\d+)(\s)?([^\s]+)? a ([^\s]+)/i,
+            command: true, help: help_msg(:request_payment_to_user)) do |response|
+        user = response.user.id
+        amount = response.matches[0][0]
+        destination_user = User.find_by_mention_name(clean_mention_name(response.matches[0][3]))
+        create_invoice_response = lnd_service.create_invoice(user, amount)
+        unless response.matches[0][2].nil?
+          currency = response.matches[0][2]
+          amount = get_amount_of_satoshis(currency, amount)
+        end
+        if success?(create_invoice_response)
+          pay_req = create_invoice_response["pay_req"]
+          qr_code = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
+              pay_req
+          robot.send_message(Source.new(user: destination_user),
+                             t(:request_payment_to_user, user: response.user.name,
+                               amount: amount, pay_req: pay_req, qr_code: qr_code,
+                               amount_in_clp: satoshis_to_clp(amount)))
+          response.reply(t(:request_payment_to_user_confirmation, amount: amount, pay_req: pay_req, destination_user: destination_user.mention_name))
         else
           response.reply(t(:error, error: create_invoice_response["error"]["message"]))
         end
@@ -104,7 +141,7 @@ module Lita
         response.reply(t(:lookup_invoice, status: status))
       end
 
-      route(/(actualiza) (invoices|cuentas|saldos)/i,
+      route(/(actualiza) (mis )?(invoices|cuentas|saldos)/i,
         command: true, help: help_msg(:force_refresh)) do |response|
         user = response.user.id
         lnd_service.force_refresh(user)

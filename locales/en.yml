@@ -12,6 +12,8 @@ en:
         lookup_invoice: "La cuenta se encuentra: *%{status}*"
         notify_payment: "Recibiste un pago por: *%{amount}* satoshis"
         force_refresh: "Todos tus pagos han sido actualizados"
+        request_payment_to_user: "El usuario %{user} esta pidiendo un cobro por %{amount} satoshis (%{amount_in_clp} CLP)\nPara pagar debes usar el siguiente código: *%{pay_req}*\nO escanea el siguiente código QR:\n%{qr_code}"
+        request_payment_to_user_confirmation: "Enviaste un cobro exitosamente al usuario *%{destination_user}*.\nPuedes consultar el estado del invoice con el siguiente código: *%{pay_req}*"
         error: "No se pudo completar el comando por el siguiente error: %{error}"
         help:
           get_user_balance:
@@ -35,5 +37,7 @@ en:
           force_refresh:
             usage: actualiza saldos
             description: Si un pago no aparece, puedes usar esta opción para actualizar todos los saldos
+          request_payment_to_user:
+            usage: cobrale <satoshis> a <usuario>
         paid: "pagada"
         not_paid: "no pagada"
