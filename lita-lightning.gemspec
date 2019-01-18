@@ -5,8 +5,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["cristobal.griffero@platan.us"]
   spec.description   = "Enables Lightning payment"
   spec.summary       = "Enables Lightning payment through slack"
-  spec.homepage      = "TODO: Add a homepage"
-  spec.license       = "TODO: Add a license"
+  spec.homepage      = "https://github.com/platanus/lita-lightning-bot"
+  spec.license       = "MIT"
   spec.metadata      = { "lita_plugin_type" => "handler" }
 
   spec.files         = `git ls-files`.split($/)
